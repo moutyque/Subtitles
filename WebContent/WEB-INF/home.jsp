@@ -12,7 +12,7 @@
 
 <h1>Home</h1>
 <p><c:if test="${!empty message }">${message }</c:if> </p>
-<form action="homeServlet" method="post" class="form-example" enctype="multipart/form-data">
+<form action="Home" method="post" class="form-example" enctype="multipart/form-data">
   <div class="form-example">
     <label for="fichier">File to send : </label>
     <input type="file" name="fichier" id="fichier" onchange="handleFiles(this.files)" />

@@ -11,9 +11,8 @@ public class LineManagerText implements SubtitleLineManager {
 	}
 
 	@Override
-	public SubtitleLineManager add(String line,List<SubtitleTripletBean> list) {
+	public SubtitleLineManager add(String line) {
 	if(line.isEmpty()) {
-		list.add(this.triplet);
 		return new LineManagerNumber(triplet);
 	}
 	else {
@@ -22,5 +21,13 @@ public class LineManagerText implements SubtitleLineManager {
 	}
 
 	}
+	@Override
+	public SubtitleTripletBean getTriplet() {
+		return triplet;
+	}
 
+	@Override
+	public void addTriplet(List<SubtitleTripletBean> outputTriplets) {
+		
+	}
 }

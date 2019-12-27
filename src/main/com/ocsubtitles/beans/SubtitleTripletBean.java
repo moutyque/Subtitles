@@ -6,7 +6,7 @@ public class SubtitleTripletBean {
 	@Override
 	public String toString() {
 		return "SubtitleTripletBean [number=" + number + ", start=" + start + ", end=" + end + ", text=" + text
-				+ ", movieName=" + movieName + ", id=" + id + "]";
+				+ ", movieName=" + movieName + "]";
 	}
 	public static final String splitTimeString = " --> ";
 	private long number = 0;
@@ -14,7 +14,7 @@ public class SubtitleTripletBean {
 	private LocalTime end;
 	private String text ="";
 	private String movieName="";
-	private long id;
+
 	
 	public long getNumber() {
 		return number;
@@ -53,9 +53,7 @@ public String getMovieName() {
 public void setMovieName(String movieName) {
 	this.movieName = movieName;
 }
-public void setId(long long1) {
-	this.id = long1;
-}
+
 
 
 

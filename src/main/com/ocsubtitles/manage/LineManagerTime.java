@@ -16,7 +16,7 @@ public class LineManagerTime implements SubtitleLineManager {
 	}
 
 	@Override
-	public SubtitleLineManager add(String line,List<SubtitleTripletBean> list)  {
+	public SubtitleLineManager add(String line)  {
 		LocalTime[] parsedTime;
 		try {
 			parsedTime = parseTime(line);
@@ -41,5 +41,14 @@ public class LineManagerTime implements SubtitleLineManager {
 		}
 		return parsedTime;
 	}
+	@Override
+	public SubtitleTripletBean getTriplet() {
+		return triplet;
+	}
 
+	@Override
+	public void addTriplet(List<SubtitleTripletBean> outputTriplets) {
+		// TODO Auto-generated method stub
+		
+	}
 }

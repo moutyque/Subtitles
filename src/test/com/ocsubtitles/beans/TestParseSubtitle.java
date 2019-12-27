@@ -23,7 +23,7 @@ public class TestParseSubtitle {
 	
 	@Test
 	public void testParseFileOk() throws UnsupportedEncodingException {
-		ParseSubtitle parseSub = new ParseSubtitle();
+		ParseSubtitle parseSub = new ParseSubtitle(new SubtitleFileBean());
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL resourcesPath = classLoader.getResource("The Irishman_en.srt");
 		String path = resourcesPath.getPath();
@@ -42,7 +42,7 @@ public class TestParseSubtitle {
 	
 	@Test
 	public void testParseFileKoNumber() throws Exception {
-		ParseSubtitle parseSub = new ParseSubtitle();
+		ParseSubtitle parseSub = new ParseSubtitle(new SubtitleFileBean());
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL resourcesPath = classLoader.getResource("testParseNumber.srt");
 		String path = resourcesPath.getPath();
@@ -56,7 +56,7 @@ public class TestParseSubtitle {
 	
 	@Test
 	public void testParseFileKoTime() throws Exception {
-		ParseSubtitle parseSub = new ParseSubtitle();
+		ParseSubtitle parseSub = new ParseSubtitle(new SubtitleFileBean());
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL resourcesPath = classLoader.getResource("testParseTime.srt");
 		String path = resourcesPath.getPath();
@@ -70,7 +70,8 @@ public class TestParseSubtitle {
 
 	@Test
 	public void testSomeSub() throws UnsupportedEncodingException {
-		ParseSubtitle parseSub = new ParseSubtitle();
+		SubtitleFileBean sampleSub = new SubtitleFileBean();
+		ParseSubtitle parseSub = new ParseSubtitle(sampleSub);
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL resourcesPath = classLoader.getResource("testSmall.srt");
 		String path = resourcesPath.getPath();
@@ -78,7 +79,7 @@ public class TestParseSubtitle {
 		File file = new File(path);
 		try {
 			parseSub.parse(file);
-			List<SubtitleTripletBean> subs = parseSub.getSubtitles();
+			List<SubtitleTripletBean> subs = sampleSub.getSubtitles();
 			SubtitleTripletBean triplet = subs.get(0);
 			assertTrue(triplet.getNumber()==1);
 			assertTrue(triplet.getText().equals("until I wasn't no more.\n"));

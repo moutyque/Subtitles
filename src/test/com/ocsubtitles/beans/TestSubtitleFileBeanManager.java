@@ -101,11 +101,12 @@ public class TestSubtitleFileBeanManager extends Mockito {
 	public void testSave() throws IOException, FileFormatException, ServletException {
 		when(part.getHeader(headerContent))
 		.thenReturn("form-data; name=\"fichier\"; filename=\"testSmall.srt\"");
-		SubtitleFileBeanManager subtitle = new SubtitleFileBeanManager(request, file.getParentFile().toString());
+		SubtitleFileBean subtitle = new SubtitleFileBean();
 		
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
-		subtitle.save(subDAO);
+		subDAO.save(subtitle);
+
 	}
 
 

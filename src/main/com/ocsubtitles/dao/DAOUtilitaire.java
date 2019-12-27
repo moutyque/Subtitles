@@ -62,7 +62,11 @@ public final class DAOUtilitaire {
         slienteClosing( statement );
         slienteClosing( connexion );
     }
-
+    /* Fermetures silencieuses du resultset, du statement */
+    public static void slienteClosing( ResultSet resultSet, Statement statement) {
+        slienteClosing( resultSet );
+        slienteClosing( statement );
+    }
     /*
      * Initialise la requête préparée basée sur la connexion passée en argument,
      * avec la requête SQL et les objets donnés.

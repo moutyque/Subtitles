@@ -41,11 +41,11 @@ public class SubtitleFileBeanManager {
 
 			subtitleFile.setName(nomFichier);
 			subtitleFile.setPath(path);
-			ParseSubtitle parser = new ParseSubtitle();
+			ParseSubtitle parser = new ParseSubtitle(subtitleFile);
 			File tmp = new File(path, nomFichier);
 			try {
 				parser.parse(tmp);
-				subtitleFile.setSubtitles(parser.getSubtitles());
+				//subtitleFile.setSubtitles(parser.getSubtitles());
 				
 			} catch (Exception e) {
 				LOGGER.severe(e.toString());
@@ -56,9 +56,6 @@ public class SubtitleFileBeanManager {
 	}
 
 
-	public void save(SubtitleDao subDAO) {
-		subtitleFile.getSubtitles().forEach(item-> subDAO.create(item));
-	}
 
 
 	private void writteFile(Part part, String fileName, String path) throws IOException {

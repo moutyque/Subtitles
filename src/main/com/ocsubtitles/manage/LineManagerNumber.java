@@ -10,9 +10,17 @@ public class LineManagerNumber implements SubtitleLineManager {
 			this.triplet = triplet;
 	}
 	@Override
-	public SubtitleLineManager add(String line, List<SubtitleTripletBean> list) {
+	public SubtitleLineManager add(String line) {
 		triplet = new SubtitleTripletBean(Integer.parseInt(line.trim()));
 		return new LineManagerTime(triplet);
+	}
+	@Override
+	public SubtitleTripletBean getTriplet() {
+		return triplet;
+	}
+	@Override
+	public void addTriplet(List<SubtitleTripletBean> outputTriplets) {
+		outputTriplets.add(triplet);
 	}
 
 

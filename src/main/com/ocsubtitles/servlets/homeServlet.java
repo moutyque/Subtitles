@@ -57,13 +57,12 @@ public class homeServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// On récupère le champ du fichier
-
 		try {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));
 			//TODO check if the file already in base
 			
-			subtitle.save(subDAO);
+			subDAO.save(subtitle.getSubtitleFile());
 			//TODO display new JSP
 		} catch (Exception e) {
 			request.setAttribute("message", e.toString());

@@ -27,7 +27,7 @@ public class SubtitleFileBean {
 	}
 
 	public List<SubtitleTripletBean> getSubtitles() {
-		return this.getSubtitles();
+		return this.subtitles;
 	}
 	public void setSubtitles(List<SubtitleTripletBean> subtitles) {
 		this.subtitles = subtitles;

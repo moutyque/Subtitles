@@ -21,6 +21,10 @@ public class SubtitleCreatorManager {
 	public static final int TAILLE_TAMPON = 10240;
 	private SubtitleFileBean subtitleFile = new SubtitleFileBean();
 
+	public SubtitleFileBean getSubtitleFile() {
+		return subtitleFile;
+	}
+
 	public SubtitleCreatorManager(HttpServletRequest request, String path)
 			throws IOException, FileFormatException, ServletException {
 		Part part = request.getPart("fichier");
@@ -40,12 +44,10 @@ public class SubtitleCreatorManager {
 
 			subtitleFile.setName(nomFichier);
 			subtitleFile.setPath(path);
-			ParseSubtitle parser = new ParseSubtitle();
+			ParseSubtitle parser = new ParseSubtitle(subtitleFile);
 			File tmp = new File(path, nomFichier);
 			try {
-				parser.parse(tmp);
-				subtitleFile.setSubtitles(parser.getSubtitles());
-				
+				parser.parse(tmp);		
 			} catch (Exception e) {
 				LOGGER.severe(e.toString());
 			}
@@ -53,12 +55,6 @@ public class SubtitleCreatorManager {
 			throw new IOException("No file name found");
 		}
 	}
-
-
-	public void save(SubtitleDao subDAO) {
-		subtitleFile.getSubtitles().forEach(item-> subDAO.create(item));
-	}
-
 
 	private void writteFile(Part part, String fileName, String path) throws IOException {
 		path = this.formatPath(path);
