@@ -65,6 +65,14 @@ public class DAOFactory {
         }
 
         DAOFactory instance = new DAOFactory( url, nomUtilisateur, motDePasse );
+        
+        try {
+			PreparedStatement prepStat= initialisationRequetePreparee(instance.getConnection(), "USE javaee;", false);
+			prepStat.execute();
+		} catch (SQLException e) {
+			throw new DAOConfigurationException("Can not use the default table javaee");
+		}
+        
         return instance;
     }
 

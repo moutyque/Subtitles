@@ -55,7 +55,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		try {
 			//Check if the table exist before save
 			boolean tableExist = checkTable();
-			boolean isEntry = findEntry(triplet.getNumber(),triplet.getMovieName())==null;
+			boolean isEntry = findEntry(triplet.getNumber(),triplet.getOriginalFileName())==null;
 			if(tableExist && isEntry) {
 				createItem(triplet);
 			}
@@ -65,7 +65,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	}
 
 	private void createItem(SubtitleTripletBean triplet) throws SQLException {
-		preparedStatement = initialisationRequetePreparee( connection, SQL_INSERT, false, triplet.getNumber(), triplet.getStart().toString(), triplet.getEnd().toString(), triplet.getText(),triplet.getMovieName() );
+		preparedStatement = initialisationRequetePreparee( connection, SQL_INSERT, false, triplet.getNumber(), triplet.getStart().toString(), triplet.getEnd().toString(), triplet.getText(),triplet.getOriginalFileName() );
 		int statut = preparedStatement.executeUpdate();
 		/* Analyse du statut retourné par la requête d'insertion */
 		if ( statut == 0 ) {
@@ -104,8 +104,8 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	private boolean createTable() throws DAOException {
 		final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
 				+ NUMBER_COLUMN +" INT NOT NULL,"
-				+ START_COLUMN + " TIME NOT NULL,"
-				+ END_COLUMN + " TIME NULL,"
+				+ START_COLUMN + " TIME(2) NOT NULL,"
+				+ END_COLUMN + " TIME(2) NOT NULL,"
 				+ TEXT_COLUMN + " VARCHAR(200),"
 				+ TRAD_COLUMN + " VARCHAR(200),"
 				+ FILE_NAME_COLUMN + " VARCHAR(100) NOT NULL,"
@@ -187,7 +187,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		triplet.setStart(date);
 		date = LocalTime.parse(resultSet.getString( END_COLUMN ));
 		triplet.setEnd(date);
-		triplet.setMovieName(resultSet.getString( FILE_NAME_COLUMN ));
+		triplet.setOriginalFileName(resultSet.getString( FILE_NAME_COLUMN ));
 		return triplet;
 	}
 

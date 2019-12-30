@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ocsubtitles.beans.SubtitleGatherManager;
 import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.dao.DAOFactory;
 import com.ocsubtitles.dao.SubtitleDao;
+import com.ocsubtitles.manage.SubtitleGatherManager;
 
 /**
  * Servlet implementation class updateServlet

@@ -60,7 +60,7 @@ public class homeServlet extends HttpServlet {
 		try {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));
-			//TODO check if the file already in base
+			//TODO Change to save in the creator not in the servlet (MVC not respected)
 			
 			subDAO.save(subtitle.getSubtitleFile());
 			//TODO display new JSP

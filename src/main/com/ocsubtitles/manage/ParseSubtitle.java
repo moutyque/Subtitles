@@ -30,9 +30,11 @@ public class ParseSubtitle implements FileParser {
 		try (Stream<String> stream = Files.lines(file.toPath())) {
 			list = stream.collect(Collectors.toList());
 			//Avoid bad formating
-			if(!list.get(list.size() - 1).isEmpty()) list.add("\n");
+			if(!list.get(list.size() - 1).isEmpty()) {
+				list.add("");
+			}
 			checkFileCompliance(list);
-			subtitleFile.getSubtitles().forEach(s->s.setMovieName(file.getName()));
+			subtitleFile.getSubtitles().forEach(s->s.setOriginalFileName(file.getName()));
 		} catch (IOException | FileFormatException e) {
 			throw e;
 		}
@@ -44,9 +46,9 @@ public class ParseSubtitle implements FileParser {
 	List<SubtitleTripletBean> outputList = new ArrayList<SubtitleTripletBean>();
 	
 		try {
-			SubtitleLineManager subtileLine = new LineManagerNumber(new SubtitleTripletBean());
+			LineSubtitleManager subtileLine = new LineNumberManager(new SubtitleTripletBean());
 			for(i = 0; i< lines.size();i++ ) {
-				subtileLine = subtileLine.add(lines.get(i));
+				subtileLine =subtileLine.add(lines.get(i));
 				subtileLine.addTriplet(outputList);
 			}
 			subtitleFile.setSubtitles(outputList);
