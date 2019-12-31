@@ -14,6 +14,7 @@ import javax.servlet.http.Part;
 import com.ocsubtitles.beans.SubtitleFileBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 import com.ocsubtitles.beans.exceptions.FileFormatException;
+import com.ocsubtitles.dao.DAOFactory;
 import com.ocsubtitles.dao.SubtitleDao;
 
 public class SubtitleCreatorManager {
@@ -51,9 +52,16 @@ public class SubtitleCreatorManager {
 			} catch (Exception e) {
 				LOGGER.severe(e.toString());
 			}
+			save();
 		} else {
 			throw new IOException("No file name found");
 		}
+	}
+
+	private void save() {
+		DAOFactory factory = DAOFactory.getInstance();
+		SubtitleDao subDoa =  factory.getSubtitleDao();
+		subDoa.save(this.subtitleFile);
 	}
 
 	private void writteFile(Part part, String fileName, String path) throws IOException {

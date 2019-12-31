@@ -60,9 +60,7 @@ public class homeServlet extends HttpServlet {
 		try {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));
-			//TODO Change to save in the creator not in the servlet (MVC not respected)
-			
-			subDAO.save(subtitle.getSubtitleFile());
+			request.setAttribute("message", "File successfully imported");
 			//TODO display new JSP
 		} catch (Exception e) {
 			request.setAttribute("message", e.toString());

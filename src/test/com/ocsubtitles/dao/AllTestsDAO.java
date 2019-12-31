@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TestDAOFactory.class, TestSubtitleDaoImpl.class })
+@SuiteClasses({ TestDAOFactory.class, TestSubtitleDaoImpl.class,TestDAOUtil.class })
 public class AllTestsDAO {
 
 }

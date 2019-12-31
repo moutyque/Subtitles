@@ -29,7 +29,9 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	private static final String TRAD_COLUMN ="Fr";
 	private static final String FILE_NAME_COLUMN="fileName";
 	private static final String TABLE_NAME="Subtitles";
-
+	private static final String DB_NAME="javaee";
+	
+	
 	private static final String SQL_INSERT = "INSERT INTO "+TABLE_NAME+" ("+NUMBER_COLUMN+", "+START_COLUMN +", "+END_COLUMN+", "
 			+TEXT_COLUMN+","+FILE_NAME_COLUMN+") VALUES (?, ?, ?, ?, ?)";
 	private static final String SQL_CHECK_ENTRY = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "+
@@ -38,7 +40,17 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	private static final String SQL_GET_MOVIE = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "
 			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+" FROM "+TABLE_NAME+
 			" WHERE "+ FILE_NAME_COLUMN +" = ?";
-
+	private static final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
+			+ NUMBER_COLUMN +" INT NOT NULL,"
+			+ START_COLUMN + " TIME(2) NOT NULL,"
+			+ END_COLUMN + " TIME(2) NOT NULL,"
+			+ TEXT_COLUMN + " VARCHAR(200),"
+			+ TRAD_COLUMN + " VARCHAR(200),"
+			+ FILE_NAME_COLUMN + " VARCHAR(100) NOT NULL,"
+			+ "PRIMARY KEY ("+NUMBER_COLUMN+","+FILE_NAME_COLUMN+"))";
+	
+	
+	
 	PreparedStatement preparedStatement = null;
 
 
@@ -87,7 +99,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 				}
 				else {
 					tableExist = false;
-					tableExist = createTable();
+					tableExist = createSubtitleTable();
 				}				
 
 
@@ -101,22 +113,22 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		return tableExist;
 	}
 
-	private boolean createTable() throws DAOException {
-		final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
-				+ NUMBER_COLUMN +" INT NOT NULL,"
-				+ START_COLUMN + " TIME(2) NOT NULL,"
-				+ END_COLUMN + " TIME(2) NOT NULL,"
-				+ TEXT_COLUMN + " VARCHAR(200),"
-				+ TRAD_COLUMN + " VARCHAR(200),"
-				+ FILE_NAME_COLUMN + " VARCHAR(100) NOT NULL,"
-				+ "PRIMARY KEY ("+NUMBER_COLUMN+","+FILE_NAME_COLUMN+"))";
+	private boolean createSubtitleTable() throws DAOException {
+		
+		return createTable(SQL_CREATE_TABLE);
+		
+	}
+	public boolean createTable(final String SQL_CREATE_TABLE) {
+		
 		Statement stmt = null;
 		boolean returnValue =true;
 		try {
+			connection.setCatalog(DB_NAME);
 			stmt = connection.createStatement();
 			stmt.executeUpdate(SQL_CREATE_TABLE);				
 		} catch (SQLException e) {
-			throw new DAOException("Can not create subtitle table", e);
+			returnValue = false;
+			throw new DAOException("Can not create subtitle table : "+e.toString());
 		}
 		finally {
 			DAOUtilitaire.slienteClosing(stmt);
@@ -125,7 +137,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		return returnValue;
 	}
 
-
+	
 	/* Implémentation de la méthode définie dans l'interface UtilisateurDao */
 	@Override
 	public SubtitleTripletBean findEntry(long number, String fileName) throws DAOException {
@@ -157,13 +169,13 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		try {
 			/* Récupération d'une connexion depuis la Factory */
 			preparedStatement = initialisationRequetePreparee( connection, SQL_GET_MOVIE, false, fileName );
-			System.out.println(preparedStatement.toString());
+			//System.out.println(preparedStatement.toString());
 			resultSet = preparedStatement.executeQuery();
 
 
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			while(resultSet.next()) {
-				System.out.println(resultSet.getString(1));
+				//System.out.println(resultSet.getString(1));
 				triplet = map( resultSet );
 				tripletList.add(triplet);
 			}
@@ -174,6 +186,8 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		}
 		return tripletList;
 	}
+	
+	
 
 	/*
 	 * Simple méthode utilitaire permettant de faire la correspondance (le

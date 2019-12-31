@@ -2,6 +2,7 @@ package com.ocsubtitles.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -61,7 +63,8 @@ public class TestSubtitleDaoImpl {
 	public void testSave() {
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
-		double num = Math.random();
+		Random rand = new Random();
+		int num =Math.abs(rand.nextInt());
 		SubtitleFileBean subFile = new SubtitleFileBean();
 		
 		SubtitleTripletBean tripletSet = new SubtitleTripletBean(1);
@@ -78,5 +81,18 @@ public class TestSubtitleDaoImpl {
 		assertEquals(tripletGet, tripletSet);
 	}
 	
-	
+	@Test
+	public void testCreateTable() {
+		DAOFactory factory = DAOFactory.getInstance();
+		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
+		Random rand = new Random();
+		int num =Math.abs(rand.nextInt());
+		final String SQL_CREATE_TABLE ="CREATE TABLE TABLETEST"+num+" ("
+				+"ID INT NOT NULL AUTO_INCREMENT,"
+				+ "TESTTEXT VARCHAR(200),"
+				+ "PRIMARY KEY (ID))";
+		
+		assertTrue(subDAO.createTable(SQL_CREATE_TABLE));
+		
+	}
 }

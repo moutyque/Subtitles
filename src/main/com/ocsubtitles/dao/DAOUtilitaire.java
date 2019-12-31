@@ -78,8 +78,12 @@ public final class DAOUtilitaire {
         }
         return preparedStatement;
     }
-public void printResutlSet(ResultSet result) throws SQLException {
-	ResultSetMetaData rsmd = result.getMetaData();
+    
+public static void printResutlSet(ResultSet result){
+	ResultSetMetaData rsmd;
+	try {
+		rsmd = result.getMetaData();
+	
 	int columnsNumber = rsmd.getColumnCount();
 	while (result.next()) {
 	    for (int i = 1; i <= columnsNumber; i++) {
@@ -89,5 +93,23 @@ public void printResutlSet(ResultSet result) throws SQLException {
 	    }
 	    System.out.println("");
 	}
+	} catch (SQLException e) {
+		System.err.println("Failed to print the result set : " + e.toString());
+	}
+}
+
+public static int getResultSetSize(ResultSet rs) {
+	int size =0;
+	if (rs != null) 
+	{
+	  try {
+		rs.last();
+		size = rs.getRow();
+	} catch (SQLException e) {
+
+	}  
+	  
+	}
+	return size;
 }
 }

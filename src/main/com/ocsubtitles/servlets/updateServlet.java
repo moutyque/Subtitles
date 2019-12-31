@@ -40,10 +40,10 @@ public class updateServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String movieName = request.getParameter("movieName");
-		if(movieName != null && !movieName.isEmpty()) {
+		String fileName = request.getParameter("fileName");
+		if(fileName != null && !fileName.isEmpty()) {
 			SubtitleGatherManager subGather = new SubtitleGatherManager(this.subDAO);
-			translateSubs = subGather.getSubtitles(movieName);
+			translateSubs = subGather.getSubtitles(fileName);
 			request.setAttribute("translatedSub", translateSubs);
 		}
 		request.getRequestDispatcher("/WEB-INF/translation.jsp").forward(request, response);
@@ -56,7 +56,6 @@ public class updateServlet extends HttpServlet {
 		
 		Map<String, String[]> translations = request.getParameterMap();
 		for(String key : translations.keySet()) {
-			
 			String[] strArr = translations.get(key);
 			for(int i = 0 ;i<strArr.length;i++) {
 				
