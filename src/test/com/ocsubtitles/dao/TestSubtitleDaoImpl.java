@@ -16,6 +16,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import com.ocsubtitles.beans.SubtitleFileBean;
+import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 
 
@@ -39,7 +40,7 @@ public class TestSubtitleDaoImpl {
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
 		
-		List<SubtitleTripletBean> subs = subDAO.findMovie("the-lord-of-the-rings-the-return-of-the-king-yify-english.srt");
+		List<SubtitleTranslateBean> subs = subDAO.findMovie("the-lord-of-the-rings-the-return-of-the-king-yify-english.srt");
 		assertFalse(subs.isEmpty());
 	}
 	

@@ -10,23 +10,19 @@ import com.ocsubtitles.dao.SubtitleDao;
 
 
 public class SubtitleGatherManager {
-	private List<SubtitleTripletBean> subs;
+	private List<SubtitleTranslateBean> subs = new ArrayList<SubtitleTranslateBean>();
 	public SubtitleGatherManager(String fileName) {
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDao subDAO = factory.getSubtitleDao();
-		
 		subs = subDAO.findMovie(fileName);
 		
 		
 		
 	}
-	public List<SubtitleTranslateBean> getSubtitles(String movieName) {
-		List<SubtitleTripletBean> tripletList = this.subtitleDao.findMovie(movieName);
-		List<SubtitleTranslateBean> transSubList = new ArrayList<SubtitleTranslateBean>();
-		for(SubtitleTripletBean triplet : tripletList) {
-			transSubList.add(new SubtitleTranslateBean(triplet,""));
-		}
-		return transSubList;
+
+	public List<SubtitleTranslateBean> getSubtitles() {
+		return subs;
+		
 	}
 
 }

@@ -4,6 +4,7 @@ package com.ocsubtitles.servlets;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -60,13 +61,15 @@ public class homeServlet extends HttpServlet {
 		try {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));
-			request.setAttribute("message", "File successfully imported");
-			//TODO display new JSP
+			String fileName = subtitle.getSubtitleFile().getName();			
+		    RequestDispatcher dispatcher = getServletContext()
+		    	      .getRequestDispatcher("/translation?fileName="+fileName);
+		    	    dispatcher.forward(request, response);
+		    	    			//TODO display new JSP
+			
 		} catch (Exception e) {
 			request.setAttribute("message", e.toString());
 			log("Error occured");
-		} finally {
-			this.doGet(request, response);
 		}
 
 	}

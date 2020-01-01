@@ -13,6 +13,7 @@ import java.util.List;
 import static com.ocsubtitles.dao.DAOUtilitaire.*;
 
 import com.ocsubtitles.beans.SubtitleFileBean;
+import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 import com.ocsubtitles.dao.exceptions.DAOException;
 
@@ -38,7 +39,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			TEXT_COLUMN+", "+FILE_NAME_COLUMN+" FROM " +TABLE_NAME+
 			" WHERE "+NUMBER_COLUMN+" = ? AND "+FILE_NAME_COLUMN+" = ?";
 	private static final String SQL_GET_MOVIE = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "
-			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+" FROM "+TABLE_NAME+
+			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+","+TRAD_COLUMN+" FROM "+TABLE_NAME+
 			" WHERE "+ FILE_NAME_COLUMN +" = ?";
 	private static final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
 			+ NUMBER_COLUMN +" INT NOT NULL,"
@@ -149,7 +150,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			resultSet = preparedStatement.executeQuery();
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			if ( resultSet.next() ) {
-				triplet = map( resultSet );
+				triplet = mapTriplet( resultSet );
 			}
 		} catch ( SQLException e ) {
 			throw new DAOException( e );
@@ -161,10 +162,10 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		return triplet;
 	}
 
-	public List<SubtitleTripletBean> findMovie(String fileName) throws DAOException {
+	public List<SubtitleTranslateBean> findMovie(String fileName) throws DAOException {
 		ResultSet resultSet = null;
-		SubtitleTripletBean triplet = null;
-		List<SubtitleTripletBean> tripletList = new ArrayList<SubtitleTripletBean>();
+		SubtitleTranslateBean sub = null;
+		List<SubtitleTranslateBean> subs = new ArrayList<SubtitleTranslateBean>();
 
 		try {
 			/* Récupération d'une connexion depuis la Factory */
@@ -176,15 +177,15 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			while(resultSet.next()) {
 				//System.out.println(resultSet.getString(1));
-				triplet = map( resultSet );
-				tripletList.add(triplet);
+				sub = mapSub( resultSet );
+				subs.add(sub);
 			}
 		} catch ( SQLException e ) {
 			throw new DAOException( e );
 		} finally {
 			slienteClosing( resultSet, preparedStatement);
 		}
-		return tripletList;
+		return subs;
 	}
 	
 	
@@ -194,7 +195,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	 * mapping) entre une ligne issue de la table des utilisateurs (un
 	 * ResultSet) et un bean Utilisateur.
 	 */
-	private static SubtitleTripletBean map( ResultSet resultSet ) throws SQLException {
+	private static SubtitleTripletBean mapTriplet( ResultSet resultSet ) throws SQLException {
 		SubtitleTripletBean triplet = new SubtitleTripletBean(resultSet.getLong( NUMBER_COLUMN ));
 		triplet.setText(resultSet.getString( TEXT_COLUMN ));
 		LocalTime date = LocalTime.parse(resultSet.getString( START_COLUMN ));
@@ -205,6 +206,23 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		return triplet;
 	}
 
+	/*
+	 * Simple méthode utilitaire permettant de faire la correspondance (le
+	 * mapping) entre une ligne issue de la table des utilisateurs (un
+	 * ResultSet) et un bean Utilisateur.
+	 */
+	private static SubtitleTranslateBean mapSub( ResultSet resultSet ) throws SQLException {
+		SubtitleTripletBean triplet = new SubtitleTripletBean(resultSet.getLong( NUMBER_COLUMN ));
+		triplet.setText(resultSet.getString( TEXT_COLUMN ));
+		LocalTime date = LocalTime.parse(resultSet.getString( START_COLUMN ));
+		triplet.setStart(date);
+		date = LocalTime.parse(resultSet.getString( END_COLUMN ));
+		triplet.setEnd(date);
+		triplet.setOriginalFileName(resultSet.getString( FILE_NAME_COLUMN ));
+		
+		SubtitleTranslateBean sub = new SubtitleTranslateBean(triplet, resultSet.getString( TRAD_COLUMN ));
+		return sub;
+	}
 	public void save(SubtitleFileBean subtitleFile) {
 		try {
 			connection = daoFactory.getConnection();
