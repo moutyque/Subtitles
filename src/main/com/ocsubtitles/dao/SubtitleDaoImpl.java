@@ -18,7 +18,6 @@ import com.ocsubtitles.beans.SubtitleTripletBean;
 import com.ocsubtitles.dao.exceptions.DAOException;
 
 public class SubtitleDaoImpl implements SubtitleDao {
-	private DAOFactory          daoFactory;
 	private Connection 			connection;
 	private boolean tableExist = false;
 
@@ -27,7 +26,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	private static final String START_COLUMN ="start";
 	private static final String END_COLUMN ="end";
 	private static final String TEXT_COLUMN = "text";
-	private static final String TRAD_COLUMN ="Fr";
+	private static final String TRANSLATION_COLUMN ="Fr";
 	private static final String FILE_NAME_COLUMN="fileName";
 	private static final String TABLE_NAME="Subtitles";
 	private static final String DB_NAME="javaee";
@@ -35,18 +34,20 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	
 	private static final String SQL_INSERT = "INSERT INTO "+TABLE_NAME+" ("+NUMBER_COLUMN+", "+START_COLUMN +", "+END_COLUMN+", "
 			+TEXT_COLUMN+","+FILE_NAME_COLUMN+") VALUES (?, ?, ?, ?, ?)";
-	private static final String SQL_CHECK_ENTRY = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "+
-			TEXT_COLUMN+", "+FILE_NAME_COLUMN+" FROM " +TABLE_NAME+
+	private static final String SQL_GET_ENTRY = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "+
+			TEXT_COLUMN+", "+FILE_NAME_COLUMN+", "+TRANSLATION_COLUMN +" FROM " +TABLE_NAME+
 			" WHERE "+NUMBER_COLUMN+" = ? AND "+FILE_NAME_COLUMN+" = ?";
 	private static final String SQL_GET_MOVIE = "SELECT "+NUMBER_COLUMN+", "+START_COLUMN+", "+END_COLUMN+", "
-			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+","+TRAD_COLUMN+" FROM "+TABLE_NAME+
+			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+","+TRANSLATION_COLUMN+" FROM "+TABLE_NAME+
 			" WHERE "+ FILE_NAME_COLUMN +" = ?";
+	private static final String SQL_UPDATE_ENTRY = "UPDATE LOW_PRIORITY "+TABLE_NAME+" SET " + TRANSLATION_COLUMN +" = ? WHERE "+NUMBER_COLUMN+"= ? AND "+ FILE_NAME_COLUMN+" =?";
+
 	private static final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
 			+ NUMBER_COLUMN +" INT NOT NULL,"
-			+ START_COLUMN + " TIME(2) NOT NULL,"
-			+ END_COLUMN + " TIME(2) NOT NULL,"
+			+ START_COLUMN + " TIME(3) NOT NULL,"
+			+ END_COLUMN + " TIME(3) NOT NULL,"
 			+ TEXT_COLUMN + " VARCHAR(200),"
-			+ TRAD_COLUMN + " VARCHAR(200),"
+			+ TRANSLATION_COLUMN + " VARCHAR(200),"
 			+ FILE_NAME_COLUMN + " VARCHAR(100) NOT NULL,"
 			+ "PRIMARY KEY ("+NUMBER_COLUMN+","+FILE_NAME_COLUMN+"))";
 	
@@ -56,7 +57,6 @@ public class SubtitleDaoImpl implements SubtitleDao {
 
 
 	public SubtitleDaoImpl(DAOFactory daoFactory) throws DAOException{
-		this.daoFactory = daoFactory;
 		try {
 			this.connection = daoFactory.getConnection();
 		} catch (SQLException e) {
@@ -64,21 +64,21 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		}
 	}
 	@Override
-	public void create(SubtitleTripletBean triplet) throws DAOException {
+	public void create(SubtitleTranslateBean sub, String fileName) throws DAOException {
 		try {
 			//Check if the table exist before save
-			boolean tableExist = checkTable();
-			boolean isEntry = findEntry(triplet.getNumber(),triplet.getOriginalFileName())==null;
-			if(tableExist && isEntry) {
-				createItem(triplet);
+			tableExist = checkTable();
+			boolean noEntry = findEntry(sub.getNumber(),fileName)==null;
+			if(tableExist && noEntry) {
+				createItem(sub,fileName);
 			}
 		} catch ( SQLException e ) {
 			throw new DAOException( e );
 		} 
 	}
 
-	private void createItem(SubtitleTripletBean triplet) throws SQLException {
-		preparedStatement = initialisationRequetePreparee( connection, SQL_INSERT, false, triplet.getNumber(), triplet.getStart().toString(), triplet.getEnd().toString(), triplet.getText(),triplet.getOriginalFileName() );
+	private void createItem(SubtitleTranslateBean sub,String fileName) throws SQLException {
+		preparedStatement = initialisationRequetePreparee( connection, SQL_INSERT, false, sub.getNumber(), sub.getStart().toString(), sub.getEnd().toString(), sub.getText(),fileName );
 		int statut = preparedStatement.executeUpdate();
 		/* Analyse du statut retourné par la requête d'insertion */
 		if ( statut == 0 ) {
@@ -141,16 +141,16 @@ public class SubtitleDaoImpl implements SubtitleDao {
 	
 	/* Implémentation de la méthode définie dans l'interface UtilisateurDao */
 	@Override
-	public SubtitleTripletBean findEntry(long number, String fileName) throws DAOException {
+	public SubtitleTranslateBean findEntry(long number, String fileName) throws DAOException {
 		ResultSet resultSet = null;
-		SubtitleTripletBean triplet = null;
+		SubtitleTranslateBean sub = null;
 		try {
 			/* Récupération d'une connexion depuis la Factory */
-			preparedStatement = initialisationRequetePreparee( connection, SQL_CHECK_ENTRY, false, number, fileName );
+			preparedStatement = initialisationRequetePreparee( connection, SQL_GET_ENTRY, false, number, fileName );
 			resultSet = preparedStatement.executeQuery();
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			if ( resultSet.next() ) {
-				triplet = mapTriplet( resultSet );
+				sub = mapSub(resultSet);
 			}
 		} catch ( SQLException e ) {
 			throw new DAOException( e );
@@ -159,24 +159,22 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			slienteClosing(preparedStatement);
 		}
 
-		return triplet;
+		return sub;
 	}
-
-	public List<SubtitleTranslateBean> findMovie(String fileName) throws DAOException {
+	public SubtitleFileBean findMovie(String fileName) throws DAOException {
 		ResultSet resultSet = null;
 		SubtitleTranslateBean sub = null;
-		List<SubtitleTranslateBean> subs = new ArrayList<SubtitleTranslateBean>();
-
+		List<SubtitleTranslateBean> subs = new ArrayList<>();
+		SubtitleFileBean subFile = new SubtitleFileBean();
+		
 		try {
 			/* Récupération d'une connexion depuis la Factory */
 			preparedStatement = initialisationRequetePreparee( connection, SQL_GET_MOVIE, false, fileName );
-			//System.out.println(preparedStatement.toString());
 			resultSet = preparedStatement.executeQuery();
 
 
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			while(resultSet.next()) {
-				//System.out.println(resultSet.getString(1));
 				sub = mapSub( resultSet );
 				subs.add(sub);
 			}
@@ -185,7 +183,9 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		} finally {
 			slienteClosing( resultSet, preparedStatement);
 		}
-		return subs;
+		subFile.setSubtitles(subs);
+		subFile.setName(fileName);
+		return subFile;
 	}
 	
 	
@@ -202,7 +202,6 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		triplet.setStart(date);
 		date = LocalTime.parse(resultSet.getString( END_COLUMN ));
 		triplet.setEnd(date);
-		triplet.setOriginalFileName(resultSet.getString( FILE_NAME_COLUMN ));
 		return triplet;
 	}
 
@@ -218,23 +217,27 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		triplet.setStart(date);
 		date = LocalTime.parse(resultSet.getString( END_COLUMN ));
 		triplet.setEnd(date);
-		triplet.setOriginalFileName(resultSet.getString( FILE_NAME_COLUMN ));
 		
-		SubtitleTranslateBean sub = new SubtitleTranslateBean(triplet, resultSet.getString( TRAD_COLUMN ));
-		return sub;
+		return new SubtitleTranslateBean(triplet, resultSet.getString( TRANSLATION_COLUMN ));
 	}
 	public void save(SubtitleFileBean subtitleFile) {
-		try {
-			connection = daoFactory.getConnection();
-			for(SubtitleTripletBean triplet : subtitleFile.getSubtitles()) {
-				this.create(triplet);
+			for(SubtitleTranslateBean sub : subtitleFile.getSubtitles()) {
+				this.create(sub,subtitleFile.getName());
 			}
-		}
-		catch (SQLException e) {
-			System.err.println(e.toString());
-		}
+	}
+	@Override
+	public void update(SubtitleFileBean subtitleFile) {
+		for(SubtitleTranslateBean sub : subtitleFile.getSubtitles()) {
+			try {
+				preparedStatement = initialisationRequetePreparee( connection, SQL_UPDATE_ENTRY, false,sub.getTranslation(), sub.getNumber(), subtitleFile.getName() );
+				preparedStatement.execute();
+			} catch (SQLException e) {
+				throw new DAOException("Could not update the entry : " +sub.toString());
+			}
 
-
+			
+		}
+		
 	}
 
 

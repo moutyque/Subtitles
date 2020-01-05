@@ -25,14 +25,13 @@ public class TestSubtitleDaoImpl {
 	@Test
 	public void testCreate() {
 		SubtitleTripletBean triplet = new SubtitleTripletBean((long) Math.random());
-		triplet.setOriginalFileName("Test.srt");
 		triplet.setText("Test text");
 		triplet.setStart(LocalTime.now());
 		triplet.setEnd(LocalTime.now());
 
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
-		subDAO.create(triplet);
+		subDAO.create(new SubtitleTranslateBean(triplet, ""),"STAR WARS");
 	}
 	
 	@Test
@@ -40,8 +39,8 @@ public class TestSubtitleDaoImpl {
 		DAOFactory factory = DAOFactory.getInstance();
 		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
 		
-		List<SubtitleTranslateBean> subs = subDAO.findMovie("the-lord-of-the-rings-the-return-of-the-king-yify-english.srt");
-		assertFalse(subs.isEmpty());
+		SubtitleFileBean subFile = subDAO.findMovie("the-lord-of-the-rings-the-return-of-the-king-yify-english.srt");
+		assertFalse(subFile.getSubtitles().isEmpty());
 	}
 	
 	@Test
@@ -53,11 +52,12 @@ public class TestSubtitleDaoImpl {
 		tripletSet.setStart(LocalTime.parse("00:00:40.190"));
 		tripletSet.setEnd(LocalTime.parse("00:01:00.000"));
 		tripletSet.setText("Orginally by Bokutox. Fixings by Muhib@Subscene");
-		tripletSet.setOriginalFileName(num+".srt");
-		subDAO.create(tripletSet);
-		SubtitleTripletBean tripletGet = subDAO.findEntry(1,num+".srt");
 		
-		assertEquals(tripletGet, tripletSet);
+		SubtitleTranslateBean subSet = new SubtitleTranslateBean(tripletSet);
+		subDAO.create(subSet,num+".srt");
+		SubtitleTranslateBean subGet = subDAO.findEntry(1,num+".srt");
+		
+		assertEquals(subGet, subSet);
 	}
 
 	@Test
@@ -67,21 +67,50 @@ public class TestSubtitleDaoImpl {
 		Random rand = new Random();
 		int num =Math.abs(rand.nextInt());
 		SubtitleFileBean subFile = new SubtitleFileBean();
-		
+		subFile.setName(num+".srt");
 		SubtitleTripletBean tripletSet = new SubtitleTripletBean(1);
 		tripletSet.setStart(LocalTime.parse("00:00:40.190"));
 		tripletSet.setEnd(LocalTime.parse("00:01:00.000"));
 		tripletSet.setText("Orginally by Bokutox. Fixings by Muhib@Subscene");
-		tripletSet.setOriginalFileName(num+".srt");
-		List<SubtitleTripletBean> tripletList = new ArrayList<SubtitleTripletBean>();
-		tripletList.add(tripletSet);
-		subFile.setSubtitles(tripletList);
+		List<SubtitleTranslateBean> subs = new ArrayList<>();
+		SubtitleTranslateBean subSet = new SubtitleTranslateBean(tripletSet);
+		subs.add(subSet);
+		subFile.setSubtitles(subs);
 		subDAO.save(subFile);
-		SubtitleTripletBean tripletGet = subDAO.findEntry(1,num+".srt");
 		
-		assertEquals(tripletGet, tripletSet);
+		SubtitleTranslateBean subGet = subDAO.findEntry(1,num+".srt");
+		
+		assertEquals(subGet, subSet);
 	}
-	
+	@Test
+	public void testUpdate() {
+		DAOFactory factory = DAOFactory.getInstance();
+		SubtitleDaoImpl subDAO = (SubtitleDaoImpl) factory.getSubtitleDao();
+		Random rand = new Random();
+		int num =Math.abs(rand.nextInt());
+		//Create sub
+		SubtitleFileBean subFile = new SubtitleFileBean();
+		subFile.setName(num+".srt");
+		SubtitleTripletBean tripletSet = new SubtitleTripletBean(1);
+		tripletSet.setStart(LocalTime.parse("00:00:40.190"));
+		tripletSet.setEnd(LocalTime.parse("00:01:00.000"));
+		tripletSet.setText("Orginally by Bokutox. Fixings by Muhib@Subscene");
+		List<SubtitleTranslateBean> subs = new ArrayList<>();
+		SubtitleTranslateBean subSet= new SubtitleTranslateBean(tripletSet, "");
+		subs.add(subSet);
+		subFile.setSubtitles(subs);
+		subDAO.save(subFile);
+		//Update sub
+		subs = new ArrayList<>();
+		subSet= new SubtitleTranslateBean(tripletSet, "translationRand"+num);
+		subs.add(subSet);
+		subFile.setSubtitles(subs);
+		subDAO.update(subFile);
+		
+		SubtitleTranslateBean subGet = subDAO.findEntry(1,num+".srt");
+		assertEquals(subGet.getTranslation(), subSet.getTranslation());
+		assertEquals(subGet, subSet);
+	}
 	@Test
 	public void testCreateTable() {
 		DAOFactory factory = DAOFactory.getInstance();

@@ -62,13 +62,16 @@ public class homeServlet extends HttpServlet {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));
 			String fileName = subtitle.getSubtitleFile().getName();			
-		    RequestDispatcher dispatcher = getServletContext()
-		    	      .getRequestDispatcher("/translation?fileName="+fileName);
-		    	    dispatcher.forward(request, response);
+			
+			response.sendRedirect("translation?fileName="+fileName);
+//		    RequestDispatcher dispatcher = getServletContext()
+//		    	      .getRequestDispatcher("/translation?fileName="+fileName);
+//		    	    dispatcher.forward(request, response);
 		    	    			//TODO display new JSP
 			
 		} catch (Exception e) {
 			request.setAttribute("message", e.toString());
+			doGet(request,response);
 			log("Error occured");
 		}
 

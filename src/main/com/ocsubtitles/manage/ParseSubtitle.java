@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.ocsubtitles.beans.SubtitleFileBean;
+import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 import com.ocsubtitles.beans.exceptions.FileFormatException;
 
@@ -34,7 +35,6 @@ public class ParseSubtitle implements FileParser {
 				list.add("");
 			}
 			checkFileCompliance(list);
-			subtitleFile.getSubtitles().forEach(s->s.setOriginalFileName(file.getName()));
 		} catch (IOException | FileFormatException e) {
 			throw e;
 		}
@@ -43,20 +43,20 @@ public class ParseSubtitle implements FileParser {
 	private boolean checkFileCompliance(List<String> lines) throws FileFormatException {
 	boolean returnValue =true;
 	int i=0;
-	List<SubtitleTripletBean> outputList = new ArrayList<SubtitleTripletBean>();
+	List<SubtitleTranslateBean> outputList = new ArrayList<>();
 	
 		try {
 			LineSubtitleManager subtileLine = new LineNumberManager(new SubtitleTripletBean());
 			for(i = 0; i< lines.size();i++ ) {
 				subtileLine =subtileLine.add(lines.get(i));
-				subtileLine.addTriplet(outputList);
+				subtileLine.addSub(outputList);
 			}
 			subtitleFile.setSubtitles(outputList);
 		}
 		catch(Exception e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Failed to parse subtitles files").append("\n").append("Error on line : ").append(String.valueOf(i+1)).append(e.toString());
-			subtitleFile.setSubtitles(new ArrayList<SubtitleTripletBean>());
+			subtitleFile.setSubtitles(new ArrayList<SubtitleTranslateBean>());
 			throw new FileFormatException(sb.toString());
 
 		}		

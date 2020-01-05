@@ -16,6 +16,7 @@ import org.junit.rules.ExpectedException;
 
 import com.mysql.cj.result.LocalTimeValueFactory;
 import com.ocsubtitles.beans.SubtitleFileBean;
+import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 import com.ocsubtitles.beans.exceptions.FileFormatException;
 import com.ocsubtitles.manage.ParseSubtitle;
@@ -35,8 +36,8 @@ public class TestParseSubtitle {
 	}
 	@Test
 	public void testParseFileOk() throws UnsupportedEncodingException {
-		SubtitleFileBean sub = new SubtitleFileBean();
-		ParseSubtitle parseSub = new ParseSubtitle(sub);
+		SubtitleFileBean subFile = new SubtitleFileBean();
+		ParseSubtitle parseSub = new ParseSubtitle(subFile);
 		ClassLoader classLoader = getClass().getClassLoader();
 		
 		URL resourcesPath = classLoader.getResource(pathResources+ "testSmall.srt");
@@ -45,14 +46,13 @@ public class TestParseSubtitle {
 		File file = new File(path);
 		try {
 			parseSub.parse(file);
-			SubtitleTripletBean triplet =  sub.getSubtitles().get(0);
-			assertEquals(triplet.getNumber(), 1);
+			SubtitleTranslateBean sub =  subFile.getSubtitles().get(0);
+			assertEquals(sub.getNumber(), 1);
 			LocalTime date1 = LocalTime.parse("00:00:40.190");
 			LocalTime date2 = LocalTime.parse("00:01:00.000");
-			assertEquals(triplet.getStart(), date1);
-			assertEquals(triplet.getEnd(), date2);
-			assertEquals(triplet.getOriginalFileName(), "testSmall.srt");
-			assertEquals(triplet.getText(), "Orginally by Bokutox. Fixings by Muhib@Subscene");
+			assertEquals(sub.getStart(), date1.toString());
+			assertEquals(sub.getEnd(), date2.toString());
+			assertEquals(sub.getText(), "Orginally by Bokutox. Fixings by Muhib@Subscene");
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -63,8 +63,8 @@ public class TestParseSubtitle {
 	
 	@Test
 	public void testParseFileOkWithNoReturn() throws UnsupportedEncodingException {
-		SubtitleFileBean sub = new SubtitleFileBean();
-		ParseSubtitle parseSub = new ParseSubtitle(sub);
+		SubtitleFileBean subFile = new SubtitleFileBean();
+		ParseSubtitle parseSub = new ParseSubtitle(subFile);
 		ClassLoader classLoader = getClass().getClassLoader();
 		
 		URL resourcesPath = classLoader.getResource(pathResources+ "testEndFormat.srt");
@@ -73,13 +73,12 @@ public class TestParseSubtitle {
 		File file = new File(path);
 		try {
 			parseSub.parse(file);
-			SubtitleTripletBean triplet =  sub.getSubtitles().get(sub.getSubtitles().size()-1);
+			SubtitleTranslateBean triplet =  subFile.getSubtitles().get(subFile.getSubtitles().size()-1);
 			assertEquals(triplet.getNumber(), 4);
 			LocalTime date1 = LocalTime.parse("00:01:24.340");
 			LocalTime date2 = LocalTime.parse("00:01:27.459");
-			assertEquals(triplet.getStart(), date1);
-			assertEquals(triplet.getEnd(), date2);
-			assertEquals(triplet.getOriginalFileName(), "testEndFormat.srt");
+			assertEquals(triplet.getStart(), date1.toString());
+			assertEquals(triplet.getEnd(), date2.toString());
 			assertEquals(triplet.getText(), "Pull it in. Go on. Go on. Go on. Pull it in.");
 		} catch (Exception e) {
 			

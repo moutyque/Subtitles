@@ -8,7 +8,7 @@ public class SubtitleFileBean {
 	public static final String SUBTITLE_EXTENSION = ".srt";
 	private String name;
 	private String path;
-	private List<SubtitleTripletBean> subtitles = new ArrayList<SubtitleTripletBean>();
+	private List<SubtitleTranslateBean> subtitles = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -26,10 +26,10 @@ public class SubtitleFileBean {
 		this.path = path;
 	}
 
-	public List<SubtitleTripletBean> getSubtitles() {
+	public List<SubtitleTranslateBean> getSubtitles() {
 		return this.subtitles;
 	}
-	public void setSubtitles(List<SubtitleTripletBean> subtitles) {
+	public void setSubtitles(List<SubtitleTranslateBean> subtitles) {
 		this.subtitles = subtitles;
 	}
 

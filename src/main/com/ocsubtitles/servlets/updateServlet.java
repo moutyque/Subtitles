@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.dao.DAOFactory;
 import com.ocsubtitles.dao.SubtitleDao;
-import com.ocsubtitles.manage.SubtitleGatherManager;
+import com.ocsubtitles.manage.SubtitleTranslationManager;
 
 /**
  * Servlet implementation class updateServlet
@@ -23,7 +23,7 @@ public class updateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SubtitleDao     subDAO;
 	  public static final String CONF_DAO_FACTORY = "daofactory";
-	  private SubtitleGatherManager subGather;
+	  private SubtitleTranslationManager subGather;
 	  
 	    public void init() throws ServletException {
 	        /* Récupération d'une instance de notre DAO Utilisateur */
@@ -43,7 +43,7 @@ public class updateServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String fileName = request.getParameter("fileName");
 		if(fileName != null && !fileName.isEmpty()) {
-			subGather = new SubtitleGatherManager(fileName);
+			subGather = new SubtitleTranslationManager(fileName);
 			request.setAttribute("translatedSub", subGather.getSubtitles());
 		}
 		request.getRequestDispatcher("/WEB-INF/translation.jsp").forward(request, response);
@@ -55,19 +55,8 @@ public class updateServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		Map<String, String[]> translations = request.getParameterMap();
-		
-		for(String key : translations.keySet()) {
-			String[] strArr = translations.get(key);
-			for(int i = 0 ;i<strArr.length;i++) {
-				
-				if(!strArr[i].isEmpty()) {
-					System.out.println("key : " + key);
-					System.out.println("translations : "  + strArr[i]);
-				}
-			}	
-		}
-		
-		
+		subGather.parseTranslation(translations);
+		subGather.save();
 		doGet(request, response);
 	}
 

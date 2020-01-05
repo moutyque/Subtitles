@@ -14,12 +14,10 @@ private SubtitleTripletBean tripletTmp = null;
 	@Before
 	public void setUp() throws Exception {
 		TRIPLET.setText("TEXT");
-		TRIPLET.setOriginalFileName("STAR WARS");
 		TRIPLET.setStart(LocalTime.MIDNIGHT);
 		TRIPLET.setEnd(LocalTime.MAX);
 		tripletTmp = new SubtitleTripletBean(TRIPLET.getNumber());
 		tripletTmp.setEnd(TRIPLET.getEnd());
-		tripletTmp.setOriginalFileName(TRIPLET.getOriginalFileName());
 		tripletTmp.setStart(TRIPLET.getStart());
 		tripletTmp.setText(TRIPLET.getText());
 	}
@@ -28,7 +26,7 @@ private SubtitleTripletBean tripletTmp = null;
 	@Test
 	public void testToString() {
 		String str = "SubtitleTripletBean [number=" + TRIPLET.getNumber() + ", start=" + TRIPLET.getStart() + ", end=" + TRIPLET.getEnd() + ", text=" + TRIPLET.getText()
-		+ ", fileName=" + TRIPLET.getOriginalFileName() + "]";
+		+ "]";
 		assertEquals(str, TRIPLET.toString());
 	}
 
@@ -52,10 +50,7 @@ private SubtitleTripletBean tripletTmp = null;
 		assertEquals("TEXT", TRIPLET.getText());
 	}
 
-	@Test
-	public void testGetOriginalFileName() {
-		assertEquals("STAR WARS", TRIPLET.getOriginalFileName());
-	}
+
 
 	@Test
 	public void testEqualOK() {
@@ -85,14 +80,7 @@ private SubtitleTripletBean tripletTmp = null;
 		tripletTmp.setEnd(null);
 		assertNotEquals(tripletTmp,TRIPLET);
 	}
-	
-	@Test
-	public void testEqualKOFileName() {
-		tripletTmp.setOriginalFileName("LIL");
-		assertNotEquals(TRIPLET, tripletTmp);
-		tripletTmp.setOriginalFileName(null);
-		assertNotEquals(tripletTmp,TRIPLET);
-	}
+
 	
 	
 	@Test
@@ -104,6 +92,6 @@ private SubtitleTripletBean tripletTmp = null;
 	@Test
 	public void testEqualhasCode() {
 		
-		assertEquals(TRIPLET.hashCode(),-1895453841);
+		assertEquals(TRIPLET.hashCode(),-1798460636);
 	}
 }

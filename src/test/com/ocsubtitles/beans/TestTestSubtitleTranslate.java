@@ -16,7 +16,6 @@ private static final String TRANSLATION_TEXT="TRANSLATION";
 	public void setUp() {
 		SubtitleTripletBean triplet = new SubtitleTripletBean(1);
 		triplet.setText(TRIPLET_TEXT);
-		triplet.setOriginalFileName("fileName.srt");
 		triplet.setStart(LocalTime.MIDNIGHT);
 		triplet.setEnd(LocalTime.MAX);
 		translation = new SubtitleTranslateBean(triplet, TRANSLATION_TEXT);
@@ -28,7 +27,7 @@ private static final String TRANSLATION_TEXT="TRANSLATION";
 		assertEquals(translation.toString(), 
 				"SubtitleTranslateBean [triplet=" + "SubtitleTripletBean [number=" + 1 + ", start=" + LocalTime.MIDNIGHT.toString() +
 				", end=" + LocalTime.MAX.toString() + ", text=" + TRIPLET_TEXT
-				+ ", fileName=" + "fileName.srt" + "]" + ", translation=" + TRANSLATION_TEXT + "]");
+				+ "]" + ", translation=" + TRANSLATION_TEXT + "]");
 		
 	}
 

@@ -65,16 +65,25 @@ public class DAOFactory {
         }
 
         DAOFactory instance = new DAOFactory( url, nomUtilisateur, motDePasse );
-        
         try {
-			PreparedStatement prepStat= initialisationRequetePreparee(instance.getConnection(), "USE javaee;", false);
-			prepStat.execute();
-		} catch (SQLException e) {
-			throw new DAOConfigurationException("Can not use the default table javaee");
-		}
+        	useDefaultDB(instance);
+        }
+        catch(DAOConfigurationException e) {
+        	System.err.println(e.toString());
+        }
+        
         
         return instance;
     }
+
+	private static void useDefaultDB(DAOFactory instance) {
+		try {
+			PreparedStatement prepStat= initialisationRequetePreparee(instance.getConnection(), "USE javaee;", false);
+			prepStat.execute();
+		} catch (SQLException e) {
+			throw new DAOConfigurationException("Can not use the default data base javaee");
+		}
+	}
 
     /* Méthode chargée de fournir une connexion à la base de données */
      /* package */ Connection getConnection() throws SQLException {

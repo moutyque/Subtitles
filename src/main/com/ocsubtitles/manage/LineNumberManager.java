@@ -2,6 +2,7 @@ package com.ocsubtitles.manage;
 
 import java.util.List;
 
+import com.ocsubtitles.beans.SubtitleTranslateBean;
 import com.ocsubtitles.beans.SubtitleTripletBean;
 
 public class LineNumberManager implements LineSubtitleManager {
@@ -19,9 +20,8 @@ public class LineNumberManager implements LineSubtitleManager {
 		return triplet;
 	}
 	@Override
-	public void addTriplet(List<SubtitleTripletBean> outputTriplets) {
-		outputTriplets.add(triplet);
+	public void addSub(List<SubtitleTranslateBean> outputList) {
+		outputList.add(new SubtitleTranslateBean(triplet, ""));
 	}
-
 
 }
