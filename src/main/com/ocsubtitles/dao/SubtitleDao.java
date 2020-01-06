@@ -13,5 +13,6 @@ void save(SubtitleFileBean subtitleFile);
 public void create(SubtitleTranslateBean sub, String string) throws DAOException;
 SubtitleTranslateBean findEntry(long number, String fileName) throws DAOException;
 public void update(SubtitleFileBean subtitleFile);
+List<String> getAllMoviesTitle();
 
 }

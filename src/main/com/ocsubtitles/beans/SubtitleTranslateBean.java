@@ -1,7 +1,5 @@
 package com.ocsubtitles.beans;
 
-import org.apache.catalina.util.ToStringUtil;
-
 public class SubtitleTranslateBean {
 
 
@@ -22,6 +20,9 @@ public class SubtitleTranslateBean {
 	}
 	
 	public String getTranslation() {
+		if(null==translation) {
+			return " ";
+		}
 		return translation;
 	}
 	public void setTranslation(String otherLangageText) {

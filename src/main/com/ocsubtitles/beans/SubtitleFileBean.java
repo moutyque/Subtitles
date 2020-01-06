@@ -32,6 +32,17 @@ public class SubtitleFileBean {
 	public void setSubtitles(List<SubtitleTranslateBean> subtitles) {
 		this.subtitles = subtitles;
 	}
+	
+	public List<String> translationsToList(){
+		List<String> returnList = new ArrayList<>();
+		for(SubtitleTranslateBean trans : subtitles) {
+			returnList.add(Long.toString(trans.getNumber()));
+			returnList.add(trans.getStart().toString() +"-->" +trans.getEnd().toString());
+			returnList.add(trans.getTranslation()+"\n");
+	
+		}
+		return returnList;
+	}
 
 
 

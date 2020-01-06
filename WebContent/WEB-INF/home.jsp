@@ -12,13 +12,27 @@
 
 <h1>Home</h1>
 <p><c:if test="${!empty message }">${message }</c:if> </p>
+
 <form action="Home" method="post" class="form-example" enctype="multipart/form-data">
   <div class="form-example">
     <label for="fichier">File to send : </label>
     <input type="file" name="fichier" id="fichier" onchange="handleFiles(this.files)" />
   </div>
   <div class="form-example">
-    <input type="submit" value="Create">
+    <input type="submit" name ="submit" value="Create">
+  </div>
+</form>
+
+<form action="Home" method="post" class="form-example" enctype="multipart/form-data">
+  <div class="form-example">
+<SELECT id ="movieList" name="movieList" size="1">
+<c:forEach var="movie" items="${movies}">  
+<OPTION><c:out value="${movie}"></c:out>
+</c:forEach>
+</SELECT>
+  </div>
+  <div class="form-example">
+    <input type="submit" name ="submit" value="Export">
   </div>
 </form>
 </body>

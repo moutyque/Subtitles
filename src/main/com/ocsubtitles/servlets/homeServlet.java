@@ -3,8 +3,8 @@ package com.ocsubtitles.servlets;
 
 
 import java.io.IOException;
+import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -12,10 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import com.ocsubtitles.dao.DAOFactory;
 import com.ocsubtitles.dao.SubtitleDao;
 import com.ocsubtitles.manage.SubtitleCreatorManager;
-import com.ocsubtitles.dao.DAOFactory;
 
 
 /**
@@ -47,6 +46,8 @@ public class homeServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		List<String> movies = subDAO.getAllMoviesTitle();
+		request.setAttribute("movies",movies);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
 
 	}
@@ -58,23 +59,47 @@ public class homeServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// On récupère le champ du fichier
-		try {
-			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
-					this.getServletContext().getRealPath("/WEB-INF"));
-			String fileName = subtitle.getSubtitleFile().getName();			
-			
-			response.sendRedirect("translation?fileName="+fileName);
-//		    RequestDispatcher dispatcher = getServletContext()
-//		    	      .getRequestDispatcher("/translation?fileName="+fileName);
-//		    	    dispatcher.forward(request, response);
-		    	    			//TODO display new JSP
+		if(request.getParameter("submit").contentEquals("Create")) {
+			createSubtitle(request, response);
+		}
+		else if(request.getParameter("submit").contentEquals("Export")) {
+			export(request, response);
+		}
+		
+		
+
+	}
+	
+	private void export(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
+		String fileName = request.getParameter("movieList");
+		
+		
+		try {			
+			response.sendRedirect("download?fileName="+fileName);
 			
 		} catch (Exception e) {
 			request.setAttribute("message", e.toString());
 			doGet(request,response);
 			log("Error occured");
 		}
-
+		
+		}  
+	
+	
+	private void createSubtitle(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
+					this.getServletContext().getRealPath("/WEB-INF"));
+			String fileName = subtitle.getSubtitleFile().getName();			
+			
+			response.sendRedirect("translation?fileName="+fileName);
+			
+		} catch (Exception e) {
+			request.setAttribute("message", e.toString());
+			doGet(request,response);
+			log("Error occured");
+		}
 	}
 
 }

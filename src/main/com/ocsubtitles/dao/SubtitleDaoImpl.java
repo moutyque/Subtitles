@@ -41,7 +41,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			+TEXT_COLUMN+", "+FILE_NAME_COLUMN+","+TRANSLATION_COLUMN+" FROM "+TABLE_NAME+
 			" WHERE "+ FILE_NAME_COLUMN +" = ?";
 	private static final String SQL_UPDATE_ENTRY = "UPDATE LOW_PRIORITY "+TABLE_NAME+" SET " + TRANSLATION_COLUMN +" = ? WHERE "+NUMBER_COLUMN+"= ? AND "+ FILE_NAME_COLUMN+" =?";
-
+	private static final String SQL_GET_ALL_MOVIES_NAME ="";
 	private static final String SQL_CREATE_TABLE ="CREATE TABLE "+TABLE_NAME+" ("
 			+ NUMBER_COLUMN +" INT NOT NULL,"
 			+ START_COLUMN + " TIME(3) NOT NULL,"
@@ -50,6 +50,7 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			+ TRANSLATION_COLUMN + " VARCHAR(200),"
 			+ FILE_NAME_COLUMN + " VARCHAR(100) NOT NULL,"
 			+ "PRIMARY KEY ("+NUMBER_COLUMN+","+FILE_NAME_COLUMN+"))";
+	private static final String  SQL_GET_ALL_FILENAME = "SELECT distinct "+ FILE_NAME_COLUMN +" FROM "+ TABLE_NAME +" ORDER BY " + FILE_NAME_COLUMN;
 	
 	
 	
@@ -220,6 +221,10 @@ public class SubtitleDaoImpl implements SubtitleDao {
 		
 		return new SubtitleTranslateBean(triplet, resultSet.getString( TRANSLATION_COLUMN ));
 	}
+	
+	private static String mapFileName( ResultSet resultSet ) throws SQLException {
+			return resultSet.getString(FILE_NAME_COLUMN);
+	}
 	public void save(SubtitleFileBean subtitleFile) {
 			for(SubtitleTranslateBean sub : subtitleFile.getSubtitles()) {
 				this.create(sub,subtitleFile.getName());
@@ -238,6 +243,20 @@ public class SubtitleDaoImpl implements SubtitleDao {
 			
 		}
 		
+	}
+	@Override
+	public List<String> getAllMoviesTitle() {
+		List<String> fileNames = new ArrayList<>();
+		try {
+			preparedStatement = initialisationRequetePreparee( connection,SQL_GET_ALL_FILENAME , false);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()) {
+				fileNames.add(mapFileName( resultSet ));
+			}
+		} catch (SQLException e) {
+			throw new DAOException("Could not find movies");
+		}
+		return fileNames;
 	}
 
 
