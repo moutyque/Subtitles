@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-<%@page import="com.ocsubtitles.beans.SubtitleTranslateBean"%>
+<%@page import="ocsubtitles.beans.SubtitleTranslateBean"%>
 <link href="css/global.css" rel="stylesheet" type="text/css">
 <script src="js/UpdateSubtitle.js"></script>
 
@@ -46,8 +46,9 @@
   <br>
 
 </c:forEach>
-<div class="overlayButton" id="updateButton">
-    <input type="submit" value="Update" class="overlayButton"  id="updateButton">
+<div class="overlayButton" id="buttons">
+    <input type="submit" name="submit" value="Update" class="overlayButton"  id="updateButton">
+    <input type="submit" name="submit" value="Export" class="overlayButton"  id="exportButton">
   </div>
   </form> 
 </c:if>
