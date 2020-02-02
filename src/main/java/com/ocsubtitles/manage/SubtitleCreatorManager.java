@@ -5,14 +5,13 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import ocsubtitles.beans.SubtitleFileBean;
-import ocsubtitles.beans.SubtitleTripletBean;
 import ocsubtitles.beans.exceptions.FileFormatException;
 import ocsubtitles.dao.DAOFactory;
 import ocsubtitles.dao.SubtitleDao;
@@ -98,10 +97,10 @@ public class SubtitleCreatorManager {
 		if (!tmpDir.exists()) {
 			if (tmpDir.mkdir()) {
 				pathExist = true;
-				System.out.println("Directory created successfully");
+				LOGGER.info("Directory created successfully");
 			} else {
 				pathExist = false;
-				System.out.println("Sorry couldn’t create specified directory");
+				LOGGER.info("Sorry couldn’t create specified directory");
 			}
 		} else {
 			pathExist = true;

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import ocsubtitles.beans.SubtitleFileBean;
@@ -14,6 +15,7 @@ import ocsubtitles.dao.DAOFactory;
 import ocsubtitles.dao.SubtitleDaoImpl;
 
 public class SubtitleExportManager {
+	private final static Logger LOGGER = Logger.getLogger(SubtitleExportManager.class.getName());
 private SubtitleFileBean sfb;
 private File file;
 	public SubtitleExportManager(String fileName) {
@@ -37,8 +39,8 @@ private File file;
 			file = File.createTempFile(sfb.getName(), "");
 			Files.write(file.toPath(), sfb.translationsToList(), option);
 		} catch (IOException e) {
-			System.err.println("Failed to create or writte in temp file");
-			System.err.println(e.toString());
+			LOGGER.severe("Failed to create or writte in temp file");
+			LOGGER.severe(e.toString());
 		}
 
 return file;
@@ -54,7 +56,7 @@ return file;
 	    }
 	    catch (IOException e) 
 	    {
-	        e.printStackTrace();
+	    	LOGGER.severe(e.toString());
 	    }
 	    return contentBuilder.toString();
 	}

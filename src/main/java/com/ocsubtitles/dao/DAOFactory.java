@@ -2,7 +2,6 @@ package ocsubtitles.dao;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,8 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import javax.servlet.GenericServlet;
 
 import ocsubtitles.dao.exceptions.DAOConfigurationException;
 
@@ -54,7 +51,7 @@ public class DAOFactory {
         }
 
         try {
-            properties.load( fichierProperties );
+            properties.load(fichierProperties);
             url = properties.getProperty( PROPERTY_URL );
             driver = properties.getProperty( PROPERTY_DRIVER );
             nomUtilisateur = properties.getProperty( PROPERTY_NOM_UTILISATEUR );
@@ -66,7 +63,7 @@ public class DAOFactory {
         try {
             Class.forName( driver );
         } catch ( ClassNotFoundException e ) {
-            throw new DAOConfigurationException( "Le driver est introuvable dans le classpath.", e );
+            throw new DAOConfigurationException( "Le driver est introuvable dans le classpath. Driver path : " + driver, e );
         }
 
         DAOFactory instance = new DAOFactory( url, nomUtilisateur, motDePasse );
@@ -75,8 +72,7 @@ public class DAOFactory {
         }
         catch(DAOConfigurationException e) {
         	logger.severe(e.toString());
-        	System.err.println(e.toString());
-        }
+          }
         
     	logger.info("DAOFactory - End");
 

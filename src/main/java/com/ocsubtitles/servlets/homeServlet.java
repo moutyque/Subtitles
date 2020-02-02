@@ -5,6 +5,7 @@ package ocsubtitles.servlets;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -26,12 +27,15 @@ import ocsubtitles.manage.SubtitleCreatorManager;
 @WebServlet( name="Home", urlPatterns = "/Home" )
 
 public class homeServlet extends HttpServlet {
+	   static Logger logger = Logger.getLogger(homeServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 	  private SubtitleDao     subDAO;
 	  public static final String CONF_DAO_FACTORY = "daofactory";
 	  
 	    public void init() throws ServletException {
 	        /* Récupération d'une instance de notre DAO Utilisateur */
+	    	logger.info("Init homeServlet");
 	        this.subDAO = ((DAOFactory) getServletContext().getAttribute(CONF_DAO_FACTORY )).getSubtitleDao();
 	    }
 	/**
@@ -47,6 +51,8 @@ public class homeServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		logger.info("doGet on homeServlet");
+
 		List<String> movies = subDAO.getAllMoviesTitle();
 		request.setAttribute("movies",movies);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/home.jsp").forward(request, response);
@@ -59,6 +65,7 @@ public class homeServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		logger.info("doPost on homeServlet");
 		//Depending of the button pressed the related function is call	
 		if(request.getParameter("submit").contentEquals("Create")) {
 			createSubtitle(request, response);
@@ -75,6 +82,7 @@ public class homeServlet extends HttpServlet {
 	}
 	
 	private void export(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
+		logger.info("export on homeServlet");
 		String fileName = request.getParameter("movieList");
 		
 		
@@ -90,6 +98,7 @@ public class homeServlet extends HttpServlet {
 		}  
 	
 	private void translate(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
+		logger.info("translate on homeServlet");
 		String fileName = request.getParameter("movieList");
 		
 		
@@ -105,6 +114,7 @@ public class homeServlet extends HttpServlet {
 		} 
 	private void createSubtitle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		logger.info("createSubtitle on homeServlet");
 		try {
 			SubtitleCreatorManager subtitle = new SubtitleCreatorManager(request,
 					this.getServletContext().getRealPath("/WEB-INF"));

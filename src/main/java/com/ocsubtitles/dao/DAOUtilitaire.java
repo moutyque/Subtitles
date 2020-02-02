@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
+
+import ocsubtitles.servlets.updateServlet;
 
 public final class DAOUtilitaire {
 
@@ -16,6 +19,7 @@ public final class DAOUtilitaire {
      */
     private DAOUtilitaire() {
     }
+	   static Logger logger = Logger.getLogger(DAOUtilitaire.class.getName());
 
     /* Fermeture silencieuse du resultset */
     public static void slienteClosing( ResultSet resultSet ) {
@@ -23,7 +27,7 @@ public final class DAOUtilitaire {
             try {
                 resultSet.close();
             } catch ( SQLException e ) {
-                System.out.println( "Failed to close the ResultSet : " + e.getMessage() );
+            	logger.severe("Failed to close the ResultSet : " + e.getMessage() );
             }
         }
     }
@@ -34,7 +38,7 @@ public final class DAOUtilitaire {
             try {
                 statement.close();
             } catch ( SQLException e ) {
-                System.out.println( "Failed to close the Statement : " + e.getMessage() );
+            	logger.severe("Failed to close the Statement : " + e.getMessage() );
             }
         }
     }
@@ -45,7 +49,7 @@ public final class DAOUtilitaire {
             try {
                 connexion.close();
             } catch ( SQLException e ) {
-                System.out.println( "Failed to close the connexion : " + e.getMessage() );
+            	logger.severe( "Failed to close the connexion : " + e.getMessage() );
             }
         }
     }
@@ -87,14 +91,14 @@ public static void printResutlSet(ResultSet result){
 	int columnsNumber = rsmd.getColumnCount();
 	while (result.next()) {
 	    for (int i = 1; i <= columnsNumber; i++) {
-	        if (i > 1) System.out.print(",  ");
+	        if (i > 1) logger.info(",  ");
 	        String columnValue = result.getString(i);
-	        System.out.print(columnValue + " " + rsmd.getColumnName(i));
+	        logger.info(columnValue + " " + rsmd.getColumnName(i));
 	    }
 	    System.out.println("");
 	}
 	} catch (SQLException e) {
-		System.err.println("Failed to print the result set : " + e.toString());
+		logger.severe("Failed to print the result set : " + e.toString());
 	}
 }
 

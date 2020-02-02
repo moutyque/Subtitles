@@ -3,14 +3,16 @@ package ocsubtitles.manage;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ocsubtitles.beans.SubtitleTripletBean;
 import ocsubtitles.beans.exceptions.FileFormatException;
+import ocsubtitles.dao.DAOUtilitaire;
 
 public class LineTimeManager implements LineSubtitleManager {
 	SubtitleTripletBean triplet;
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss,SSS");
-
+	 static Logger logger = Logger.getLogger(LineTimeManager.class.getName());
 	public LineTimeManager(SubtitleTripletBean triplet) {
 		this.triplet = triplet;
 	}
@@ -23,7 +25,7 @@ public class LineTimeManager implements LineSubtitleManager {
 			this.triplet.setStart(parsedTime[0]);
 			this.triplet.setEnd(parsedTime[1]);
 		} catch (FileFormatException e) {
-			System.err.println(e.toString());
+			logger.severe(e.toString());
 			this.triplet.setStart(LocalTime.MIDNIGHT);
 			this.triplet.setEnd(LocalTime.MIDNIGHT);
 		}
